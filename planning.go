@@ -6,9 +6,13 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 type Item struct {
+	gorm.Model
 	Id          string   `json:"id"`
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
@@ -18,8 +22,30 @@ type Item struct {
 }
 
 type Schedule struct {
+	gorm.Model
 	Id        string
 	Scheduled []*Item
+}
+
+type Sys struct {
+	Filename string
+	Db       gorm.DB
+}
+
+func NewSys(filename string) Sys {
+	s := Sys{Filename: filename}
+	db, err := gorm.Open(sqlite.Open(filename), &gorm.Config{})
+	if err != nil {
+		panic("DB was not made")
+	}
+	s.Db = db
+	return s
+}
+
+func (s *Sys) AddItem(title string) {
+	i := NewItem()
+	i.Title = title
+
 }
 
 func (i Item) GoString() string {
