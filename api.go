@@ -29,6 +29,7 @@ func (s *Sys) getItem(w http.ResponseWriter, r *http.Request, p httprouter.Param
 	} else {
 		var res Item
 		s.Db.First(&res, "id = ?", id)
+		fmt.Printf("%#v", res)
 		j := json.NewEncoder(w).Encode(res)
 		fmt.Fprint(w, j)
 	}
