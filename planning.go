@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/julienschmidt/httprouter"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -30,6 +31,7 @@ type Schedule struct {
 type Sys struct {
 	Filename string
 	Db       *gorm.DB
+	Router   httprouter.Router
 }
 
 func NewSys(filename string) Sys {
@@ -46,6 +48,11 @@ func (s *Sys) AddItem(title string) {
 	i := NewItem()
 	i.Title = title
 	s.Db.Create(&i)
+}
+
+func (s *Sys) AddSchedule() {
+	ss := NewSchedule()
+	s.Db.Create(&ss)
 }
 
 func (i Item) GoString() string {

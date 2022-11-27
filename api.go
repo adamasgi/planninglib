@@ -9,25 +9,32 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func newSchedule(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func newSchedule(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 }
-func newItem(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func newItem(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 }
-func addItemSchedule(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func addItemSchedule(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 }
-func getItem(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func getItem(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	id := p.ByName("id")
-	j := json.NewEncoder(w).Encode(id)
+	var res Item
+	s.Db.First(&res, "id = ?", id)
+	j := json.NewEncoder(w).Encode(res)
 	fmt.Fprint(w, j)
 }
 
+func (s *Sys) handler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintf(w, "LONNIE!!! %s", s.Filename)
+}
+
 func Api(port string) {
-	router := httprouter.New()
-	router.GlobalOPTIONS = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	sys := NewSys("./test.db")
+	sys.Router = httprouter.New()
+	sys.Router.GlobalOPTIONS = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Access-Control-Request-Method") != "" {
 			// Set CORS headers
 			header := w.Header()
@@ -39,8 +46,8 @@ func Api(port string) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	router.POST("/item", newItem)
-	router.GET("/:item", getItem)
+	sys.Router.POST("/item", newItem)
+	sys.Router.GET("/:item", getItem)
 
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":"+port, sys.Router))
 }
