@@ -18,7 +18,7 @@ func newItem(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params
 func addItemSchedule(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 }
-func getItem(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (s *Sys) getItem(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	id := p.ByName("id")
 	var res Item
@@ -46,8 +46,7 @@ func Api(port string) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	sys.Router.POST("/item", newItem)
-	sys.Router.GET("/:item", getItem)
+	sys.Router.GET("/:item", sys.getItem)
 	sys.Router.GET("/", sys.handler)
 
 	log.Fatal(http.ListenAndServe(":"+port, sys.Router))
