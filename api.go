@@ -22,7 +22,7 @@ func (s *Sys) getItem(w http.ResponseWriter, r *http.Request, p httprouter.Param
 	w.Header().Set("Content-Type", "application/json")
 	id := p.ByName("id")
 	if id == "" {
-		var errMesg = map[string]string{"err": "ID not set"}
+		errMesg := struct{ Err string }{Err: "ID not set"}
 		errJson := json.NewEncoder(w).Encode(errMesg)
 		fmt.Fprint(w, errJson)
 	}
@@ -53,7 +53,7 @@ func Api(port string) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	sys.Router.GET("/:item", sys.getItem)
+	sys.Router.GET("/item/:item", sys.getItem)
 	sys.Router.GET("/", sys.handler)
 
 	log.Fatal(http.ListenAndServe(":"+port, sys.Router))
