@@ -44,10 +44,11 @@ func NewSys(filename string) Sys {
 	return s
 }
 
-func (s *Sys) AddItem(title string) {
+func (s *Sys) AddItem(title string) Item {
 	i := NewItem()
 	i.Title = title
 	s.Db.Create(&i)
+	return i
 }
 
 func (s *Sys) AddSchedule() {

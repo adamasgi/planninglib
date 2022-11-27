@@ -9,18 +9,23 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func newSchedule(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (s *Sys) newSchedule(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 }
-func newItem(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (s *Sys) newItem(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 }
-func addItemSchedule(s *Sys, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (s *Sys) addItemSchedule(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 }
 func (s *Sys) getItem(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	id := p.ByName("id")
+	if id == "" {
+		var errMesg = map[string]string{"err": "ID not set"}
+		errJson := json.NewEncoder(w).Encode(errMesg)
+		fmt.Fprint(w, errJson)
+	}
 	var res Item
 	s.Db.First(&res, "id = ?", id)
 	j := json.NewEncoder(w).Encode(res)
@@ -33,6 +38,8 @@ func (s *Sys) handler(w http.ResponseWriter, r *http.Request, p httprouter.Param
 
 func Api(port string) {
 	sys := NewSys("./test.db")
+	i := sys.AddItem("TESTING")
+	fmt.Printf("ID: %s", i.Id)
 	sys.Router = httprouter.New()
 	sys.Router.GlobalOPTIONS = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Access-Control-Request-Method") != "" {
