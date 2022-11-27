@@ -31,7 +31,7 @@ type Schedule struct {
 type Sys struct {
 	Filename string
 	Db       *gorm.DB
-	Router   httprouter.Router
+	Router   *httprouter.Router
 }
 
 func NewSys(filename string) Sys {
