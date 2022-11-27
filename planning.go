@@ -29,7 +29,7 @@ type Schedule struct {
 
 type Sys struct {
 	Filename string
-	Db       gorm.DB
+	Db       *gorm.DB
 }
 
 func NewSys(filename string) Sys {
@@ -45,7 +45,7 @@ func NewSys(filename string) Sys {
 func (s *Sys) AddItem(title string) {
 	i := NewItem()
 	i.Title = title
-
+	s.Db.Create(&i)
 }
 
 func (i Item) GoString() string {
