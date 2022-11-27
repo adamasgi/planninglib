@@ -25,11 +25,13 @@ func (s *Sys) getItem(w http.ResponseWriter, r *http.Request, p httprouter.Param
 		errMesg := struct{ Err string }{Err: "ID not set"}
 		errJson := json.NewEncoder(w).Encode(errMesg)
 		fmt.Fprint(w, errJson)
+
+	} else {
+		var res Item
+		s.Db.First(&res, "id = ?", id)
+		j := json.NewEncoder(w).Encode(res)
+		fmt.Fprint(w, j)
 	}
-	var res Item
-	s.Db.First(&res, "id = ?", id)
-	j := json.NewEncoder(w).Encode(res)
-	fmt.Fprint(w, j)
 }
 
 func (s *Sys) handler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
