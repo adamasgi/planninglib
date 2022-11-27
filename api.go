@@ -48,6 +48,7 @@ func Api(port string) {
 
 	sys.Router.POST("/item", newItem)
 	sys.Router.GET("/:item", getItem)
+	sys.Router.GET("/", sys.handler)
 
 	log.Fatal(http.ListenAndServe(":"+port, sys.Router))
 }
